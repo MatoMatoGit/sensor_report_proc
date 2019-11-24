@@ -1,0 +1,39 @@
+inst mysql-server
+sudo mysql_secure_installation
+
+CREATE DATABASE mato;
+USE mato;
+CREATE USER 'dorus'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'dorus'@'localhost' WITH GRANT OPTION;
+
+In database.py edit mysql+pymysql:// to include created username and password.
+
+Follow readme on Github.
+
+goto localhost:5000/graphql
+
+query:
+
+{
+  allMeasurements {
+    edges {
+      node {
+        id
+        uuid
+        data
+        createdOn
+        sensorHash
+      }
+    }
+  }
+  
+  allSensors {
+    edges {
+      node {
+        id
+        uuid
+        hash
+      }
+    }
+  }
+}
