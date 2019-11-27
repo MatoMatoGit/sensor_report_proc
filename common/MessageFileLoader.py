@@ -29,18 +29,24 @@ class MessageFileLoader:
 
         # Get the list index of the next JSON file.
         i = 0
+        if len(files) is 0:
+            return -1, -1, -1
         while '.json' not in files[i]:
-            if i < len(files) - 1:
+            if i < len(files):
                 i += 1
             else:
                 return -1, -1, -1
 
         # Read the JSON data and serialize it to the output stream.
         try:
-            f_data = open(self.Dir + "/" + files[i], 'r')
+            f_path = self.Dir + "/" + files[i]
+            print("[MsgFileLoader] Loading file: {}".format(f_path))
+            f_data = open(f_path, 'r')
             msg_data = json.load(f_data)
             f_data.close()
-            return self.IdFromFileName(files[i]), i, msg_data
+            return MessageFileLoader.IdFromFileName(files[i]), \
+                   MessageFileLoader.SeqNrFromFileName(files[i]), \
+                   msg_data
         except ValueError:
             print("Failed to read / serialize data for file {}".format(files[i]))
             return -1, -1, -1
@@ -52,9 +58,11 @@ class MessageFileLoader:
         except OSError:
             print("Could not remove file: {}.".format(f_path))
 
-    def IdFromFileName(self, file_name):
+    @staticmethod
+    def IdFromFileName(file_name):
         return file_name.split('_')[0]
 
     @staticmethod
-    def SeqNrFromFileName(x):
-        return x.split('_')[1]
+    def SeqNrFromFileName(file_name):
+        seq_nr = file_name.split('_')[1]
+        return seq_nr.split('.')[0]
