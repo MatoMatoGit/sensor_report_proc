@@ -1,25 +1,27 @@
 from common.MessageFileLoader import MessageFileLoader
-from common.GraphQLSocket import GraphQLSocket
 import time
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
+
+_transport = RequestsHTTPTransport(
+    url='http://localhost:5000/graphql',
+    use_json=True,
+)
 
 
 def MessageDataToQuery(data, id, timestamp):
-    return """
+    return gql("""
     mutation {
-      createMeasurement(data:""" + str(data) + """, hash:""" + str(id) + """, createdOn: """ + timestamp + """){
-        measurement{
-          id
-          data
-          createdOn
-          uuid
-        }
+      createMeasurement(data:""" + str(data) + """, sensorHash: \"""" + str(id) + """\"){
         sensor {
           id
-          hash
+          sensorHash
+          createdOnServer
         }
       }
     }
-    """
+    """)
+
 
 def VerifyMessage(msg, msg_schema):
     return True
@@ -31,7 +33,7 @@ def VerifyId(msg_meta, tx_id):
     return False
 
 
-def ProcessMessage(msg, id):
+def ProcessMessage(client, msg, id):
     if VerifyMessage(msg, msg) is False:
         print("[MsgProc] Error: Received message does not match the defined schema.")
         return
@@ -41,25 +43,27 @@ def ProcessMessage(msg, id):
         return
 
     datetime = msg["meta"]["dt"]
-    samples = msg["data"]["smp"]
+    samples = msg["data"]["S"]
     for s in samples:
         query = MessageDataToQuery(s, id, datetime)
-        print(query)
-        # graphql_sock.Send(query)
+        print(client.execute(query))
 
 
 def main(directory):
 
     msg_loader = MessageFileLoader(directory)
 
-    #graphql_sock = GraphQLSocket("./cfg")
+    client = Client(
+        transport=_transport,
+        fetch_schema_from_transport=True,
+    )
 
     while True:
         while True:
             tx_id, seq_nr, msg = msg_loader.LoadNext()
 
             if seq_nr != -1:
-                ProcessMessage(msg, tx_id)
+                ProcessMessage(client, msg, tx_id)
                 msg_loader.Remove(tx_id, seq_nr)
             else:
                 print("No more files available")
@@ -69,5 +73,5 @@ def main(directory):
 
 
 if __name__ == '__main__':
-    main("./tst/0.1")
+    main("../upyiot/test/0.2")
 
