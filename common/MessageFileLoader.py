@@ -32,7 +32,7 @@ class MessageFileLoader:
         if len(files) is 0:
             return -1, -1, -1
         while '.json' not in files[i]:
-            if i < len(files):
+            if i < len(files) - 1:
                 i += 1
             else:
                 return -1, -1, -1
