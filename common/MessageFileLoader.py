@@ -11,6 +11,7 @@ class MessageFileLoader:
         """
         self.FileNames = list()
         self.Dir = directory
+        print("[MsgLoader] Created with dir: {}".format(directory))
 
     def LoadNext(self):
         """
