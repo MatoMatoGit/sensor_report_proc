@@ -1,0 +1,22 @@
+{
+  "TEMP": {
+    "type": "0.1",
+    "spec": "/home/dorus/Development/sensor_report_proc/tst/temp_spec.json"
+  },
+  "MOIST": {
+    "type": "0.2",
+    "spec": "/home/dorus/Development/sensor_report_proc/tst/moist_spec.json"
+  },
+  "LIGHT": {
+    "type": "0.3",
+    "spec": "/home/dorus/Development/sensor_report_proc/tst/light_spec.json"
+  },
+  "MOIST_CAL_LOW": {
+    "type": "0.4",
+    "spec": "/home/dorus/Development/sensor_report_proc/tst/moist_cal_l_spec.json"
+  },
+  "MOIST_CAL_HIGH": {
+    "type": "0.5",
+    "spec": "/home/dorus/Development/sensor_report_proc/tst/moist_cal_h_spec.json"
+  }
+}
