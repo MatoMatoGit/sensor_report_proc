@@ -1,16 +1,16 @@
 from common.MessageFileLoader import MessageFileLoader
-# from gql import gql, Client
-# from gql.transport.requests import RequestsHTTPTransport
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
 import time
 import sys
 import getopt
 import json
 
 
-# _Transport = RequestsHTTPTransport(
-#     url='http://localhost:5000/graphql',
-#     use_json=True,
-# )
+transport = RequestsHTTPTransport(
+    url='http://localhost:5000/graphql',
+    use_json=True,
+)
 
 _MsgListFile = None
 _MsgList = {}
@@ -34,13 +34,11 @@ def MessageDataToQuery(data, id, msg_type, timestamp):
     print(msg_type)
     print(timestamp)
     print(data)
-    return print("""
+    return gql("""
     mutation {
-      createMeasurement(data:""" + str(data) + """, sensorHash: \"""" + str(id) + """\", sensorType: \"""" + msg_type + """\",  createdOnModule: \"""" + timestamp + """\"{
-        sensor {
+      createMeasurement(data:""" + str(data) + """, sensorHash: \"""" + str(id) + """\", sensorType: \"""" + msg_type + """\",  createdOnModule: \"""" + timestamp + """\"){
+        measurement {
           id
-          sensorHash
-          createdOnServer
         }
       }
     }
@@ -89,7 +87,7 @@ def ProcessMessage(client, msg, id):
 
     for s in samples:
         query = MessageDataToQuery(s, id, msg_type_str, datetime)
-        #print(client.execute(query))
+        print(client.execute(query))
 
     return 0
 
@@ -136,12 +134,10 @@ def main(argv):
         path = ComposePath(_BaseDir, _MsgList[msg_entry]["type"])
         msg_loaders.add(MessageFileLoader(path))
 
-    # client = Client(
-    #     transport=_Transport,
-    #     fetch_schema_from_Transport=True,
-    # )
-
-    client = None
+    client = Client(
+        transport=transport,
+        fetch_schema_from_transport=True,
+    )
 
     while True:
         while True:
