@@ -21,14 +21,6 @@ def ComposePath(base, type):
     return base + "/" + str(type)
 
 
-# mutation {
-#   createMeasurement(sensorHash:"bbb", sensorType:"MOIST", data:12, createdOnModule:"12u84872"){
-#     measurement {
-#       id
-#     }
-#   }
-# }
-
 def MessageDataToQuery(data, id, msg_type, timestamp):
     print(id)
     print(msg_type)
