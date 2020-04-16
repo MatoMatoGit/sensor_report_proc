@@ -23,7 +23,8 @@ class MessageFileLoader:
         try:
             files = os.listdir(self.Dir)
             files = sorted(files, key=MessageFileLoader.SeqNrFromFileName)
-            print(files)
+            if len(files) > 0:
+                print(files)
         except OSError:
             print("[MsgFileLoader] Cannot load next file.")
             return -1, -1, -1
